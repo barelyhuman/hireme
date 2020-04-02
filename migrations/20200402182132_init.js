@@ -13,7 +13,7 @@ exports.up = function (knex) {
       // Table Fields
       table.uuid('id').unique().primary().notNullable();
       table.string('name').notNullable();
-      table.string('description').notNullable();
+      table.text('description').notNullable();
       table.string('tags').nullable();
       table.string('location').nullable();
       table.uuid('created_by').notNullable();
