@@ -78,3 +78,11 @@ This is just a gist of what's being used in this project
 - Authorization(Current): [JWT](https://www.npmjs.com/package/jsonwebtoken)
 - Authorization(Future Releases): [Magic.Link](https://magic.link/)
 - Crypto: [bcrypt](https://www.npmjs.com/package/bcrypt)
+
+## Why no linters ?
+
+I think that people learn with the mistakes they make, forcing them into understanding a lint rule just because I thought it was the right way to write code is the worst way I can limit them.
+
+The reason prettier exists is so that I don't have to go through hundreds of lines of code diffs just because someone else formatted stuff differently.
+
+If I do add a linter in the future, it'll only be to monitor erros in the code and not for enforcing a code style like loopback's or airbnb's.
