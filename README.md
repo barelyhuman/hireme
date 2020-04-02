@@ -4,7 +4,11 @@ A Simple index of job listings for people that are looking for job.
 
 ## Badges
 
-![server](https://github.com/barelyhuman/hireme/workflows/server/badge.svg) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+Canary: ![server](https://github.com/barelyhuman/hireme/workflows/server/badge.svg?branch=canary)
+
+Stable: ![server](https://github.com/barelyhuman/hireme/workflows/server/badge.svg?branch=stable)
+
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 ## Setup
 
