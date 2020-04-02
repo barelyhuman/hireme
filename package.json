@@ -22,8 +22,12 @@
     "prettier:check": "prettier --check .",
     "prettier:format": "prettier --write .",
     "dev": "nodemon --inspect .",
+    "start:server:prod": "NODE_ENV=production node bin/server.js",
+    "start:server:staging": "NODE_ENV=staging node bin/server.js",
     "start:server": "node bin/server.js",
-    "start:worker": "node bin/worker.js"
+    "start:worker": "node bin/worker.js",
+    "start:worker:prod": "NODE_ENV=production node bin/worker.js",
+    "start:worker:staging": "NODE_ENV=staging node bin/worker.js"
   },
   "husky": {
     "hooks": {

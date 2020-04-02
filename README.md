@@ -1,23 +1,23 @@
-# Invok
+# Hire Me
 
-An API first solution to generating Invoices
+A Simple index of job listings for people that are looking for job.
 
 ## Badges
 
-![server](https://github.com/barelyhuman/invok/workflows/server/badge.svg) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+![server](https://github.com/barelyhuman/hireme/workflows/server/badge.svg) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 ## Setup
 
 Clone this repository
 
 ```sh
-  git clone git@github.com:barelyhuman/invok.git
+  git clone git@github.com:barelyhuman/hireme.git
 ```
 
 Change directory to the repository
 
 ```sh
-  cd invok
+  cd hireme
 ```
 
 Install required dependencies
