@@ -5,9 +5,9 @@ name: server
 
 on:
   push:
-    branches: [master]
+    branches: [stable, canary]
   pull_request:
-    branches: [master]
+    branches: [stable, canary]
 
 jobs:
   check-server:
