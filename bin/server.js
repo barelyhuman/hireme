@@ -26,9 +26,13 @@ app.use(logger);
 app.use(bodyParser());
 
 // Inject db instance into the ctx
-app.use((ctx, next) => {
-  ctx.db = db;
-  next();
+app.use(async (ctx, next) => {
+  try {
+    ctx.db = db;
+    next();
+  } catch (err) {
+    ctx.throw(err.code, err.message);
+  }
 });
 
 // Public Routes
@@ -43,7 +47,7 @@ injectPublicRoutes(app);
   Can be added after the jwtValidator Insertion
 */
 
-app.use(jwtValidator());
+app.use(jwtValidator);
 
 injectPrivateRoutes(app);
 
