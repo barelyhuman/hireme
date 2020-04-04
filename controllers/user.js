@@ -1,4 +1,3 @@
-
 const controller = {
   name: 'UserController',
 };

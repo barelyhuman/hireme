@@ -23,7 +23,6 @@ const app = new Cottage();
 // Inject minimal logger
 app.use(logger);
 
-
 // Inject Cors
 app.use(
   cors({
@@ -60,7 +59,8 @@ app.use(async (ctx, next) => {
         { expose: true }
       );
     }
-  });
+  }
+});
 
 // Public Routes
 app.get('/ping', async (ctx) => {
@@ -73,7 +73,6 @@ injectPublicRoutes(app);
   Routes that require the JWT to work 
   Can be added after the jwtValidator Insertion
 */
-
 
 app.use(jwtValidator);
 
