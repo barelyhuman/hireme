@@ -1,5 +1,6 @@
 const { Cottage, Response } = require('cottage');
 const bodyParser = require('koa-bodyparser');
+const cors = require('@koa/cors');
 
 const PORT = process.env.PORT || 3000;
 
@@ -22,13 +23,43 @@ const app = new Cottage();
 // Inject minimal logger
 app.use(logger);
 
+// Inject Cors
+app.use(
+  cors({
+    origin: (ctx) => {
+      const origin = ctx.headers.origin;
+      const validOrigins = ['http://localhost:8080', '*.barelyhuman.dev'];
+      if (validOrigins.indexOf(origin) !== -1) {
+        return origin;
+      }
+      return false;
+    },
+  })
+);
+
 // Parse requests
 app.use(bodyParser());
 
 // Inject db instance into the ctx
-app.use((ctx, next) => {
-  ctx.db = db;
-  next();
+
+app.use(async (ctx, next) => {
+  try {
+    ctx.db = db;
+    await next();
+  } catch (err) {
+    console.error(err);
+    if (typeof err.code == 'number') {
+      ctx.throw(err.code, err.message);
+    } else {
+      ctx.throw(
+        500,
+        JSON.stringify({
+          message: 'Oops! Something went wrong',
+        }),
+        { expose: true }
+      );
+    }
+  }
 });
 
 // Public Routes
@@ -43,9 +74,14 @@ injectPublicRoutes(app);
   Can be added after the jwtValidator Insertion
 */
 
-app.use(jwtValidator());
+app.use(jwtValidator);
 
 injectPrivateRoutes(app);
+
+process.on('unhandledRejection', (err) => {
+  console.error(err);
+  throw err;
+});
 
 // Run the engines!
 app.listen(PORT, () => {
