@@ -15,16 +15,16 @@ controller.register = async (ctx) => {
       return new Response(400, { error: `Email/Password is required` });
     }
 
+    if (!regexPatterns.email.test(payload.email)) {
+      return new Response(400, {
+        error: `Please enter a valid email`,
+      });
+    }
+
     if (!regexPatterns.password.test(payload.password)) {
       return new Response(400, {
         error: `Password should contain at least 1 upper case letter,
         1 lower case letter,1 number or special character,8 characters in length`,
-      });
-    }
-
-    if (!regexPatterns.email.test(payload.email)) {
-      return new Response(400, {
-        error: `Please enter a valid email`,
       });
     }
 
