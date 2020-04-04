@@ -16,6 +16,6 @@ module.exports = async (ctx, next) => {
 
     return next();
   } catch (err) {
-    ctx.throw(500, `Internal Server Error`);
+    ctx.throw(401, `Unauthorized`);
   }
 };
