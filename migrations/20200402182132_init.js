@@ -2,6 +2,7 @@ exports.up = function (knex) {
   return knex.schema
 
     .createTable('users', function (table) {
+
       table.increments('id').unique().primary().notNullable();
       table.string('email').unique().notNullable();
       table.string('password').notNullable();
@@ -10,11 +11,14 @@ exports.up = function (knex) {
 
     .createTable('listings', function (table) {
       // Table Fields
+
       table.increments('id').unique().primary().notNullable();
+
       table.string('name').notNullable();
       table.text('description').notNullable();
       table.string('tags').nullable();
       table.string('location').nullable();
+
       table.integer('created_by').notNullable();
 
       // Foreign Keys
