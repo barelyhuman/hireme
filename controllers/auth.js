@@ -1,6 +1,7 @@
 const jwtGenerator = require('../utils/token-generator');
 const passwordHasher = require('../utils/password-hash');
 const { Response } = require('cottage');
+const regexPatterns = require('../utils/regex');
 
 const controller = {
   name: 'AuthController',
@@ -9,16 +10,21 @@ const controller = {
 controller.register = async (ctx) => {
   const trx = await ctx.db.transaction();
   try {
-    const passwordRegex = /(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/;
     const payload = ctx.request.body || {};
     if (!payload.email || !payload.password) {
       return new Response(400, { error: `Email/Password is required` });
     }
 
-    if (!passwordRegex.test(payload.password)) {
+    if (!regexPatterns.password.test(payload.password)) {
       return new Response(400, {
         error: `Password should contain at least 1 upper case letter,
         1 lower case letter,1 number or special character,8 characters in length`,
+      });
+    }
+
+    if (!regexPatterns.email.test(payload.email)) {
+      return new Response(400, {
+        error: `Please enter a valid email`,
       });
     }
 
