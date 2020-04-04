@@ -12,10 +12,19 @@ module.exports = async (ctx, next) => {
 
     const decoded = await jwt.verify(token, Buffer.from(jwtSecret, 'base64'));
 
+    const currentUser = await ctx.db('users').where({
+      id: decoded.id,
+    });
+
+    if (!currentUser || !currentUser.length) {
+      return ctx.throw(401, `Unauthorized`);
+    }
+
     ctx.currentUser = decoded;
 
     return next();
   } catch (err) {
-    ctx.throw(500, `Internal Server Error`);
+    ctx.throw(401, `Unauthorized`);
+    throw err;
   }
 };

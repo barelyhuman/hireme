@@ -23,14 +23,16 @@ const app = new Cottage();
 // Inject minimal logger
 app.use(logger);
 
-
 // Inject Cors
 app.use(
   cors({
     origin: (ctx) => {
       const origin = ctx.headers.origin;
-      const validOrigins = ['http://localhost:8080', '*.barelyhuman.dev'];
-      if (validOrigins.indexOf(origin) !== -1) {
+      const validOrigins = [
+        'http://localhost:8080',
+        'https://hireme.barelyhuman.dev',
+      ];
+      if (validOrigins.indexOf(origin) > -1) {
         return origin;
       }
       return false;
@@ -51,6 +53,8 @@ app.use(async (ctx, next) => {
     console.error(err);
     if (typeof err.code == 'number') {
       ctx.throw(err.code, err.message);
+    } else if (err.statusCode) {
+      ctx.throw(err.statusCode, err.message);
     } else {
       ctx.throw(
         500,
@@ -60,7 +64,8 @@ app.use(async (ctx, next) => {
         { expose: true }
       );
     }
-  });
+  }
+});
 
 // Public Routes
 app.get('/ping', async (ctx) => {
@@ -73,7 +78,6 @@ injectPublicRoutes(app);
   Routes that require the JWT to work 
   Can be added after the jwtValidator Insertion
 */
-
 
 app.use(jwtValidator);
 

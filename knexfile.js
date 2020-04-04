@@ -16,4 +16,11 @@ module.exports = {
       tableName: 'migrations',
     },
   },
+  staging: {
+    client: 'postgresql',
+    connection: process.env.DATABASE_URL,
+    migrations: {
+      tableName: 'migrations',
+    },
+  },
 };
