@@ -1,3 +1,5 @@
+const { Response } = require('cottage');
+
 const controller = {
   name: 'ListingController',
 };
