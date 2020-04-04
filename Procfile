@@ -1,1 +1,1 @@
-web: npm run start:server:staging
+web: npm run db:migrate && npm run start:server:staging
