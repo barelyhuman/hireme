@@ -9,10 +9,19 @@ const controller = {
 controller.register = async (ctx) => {
   const trx = await ctx.db.transaction();
   try {
+    const passwordRegex = /(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/;
     const payload = ctx.request.body || {};
     if (!payload.email || !payload.password) {
       return new Response(400, { error: `Email/Password is required` });
     }
+
+    if (!passwordRegex.test(payload.password)) {
+      return new Response(400, {
+        error: `Password should contain at least 1 upper case letter,
+        1 lower case letter,1 number or special character,8 characters in length`,
+      });
+    }
+
     const hashedPassword = await passwordHasher.hash(payload.password);
 
     const existingUser = await trx('users').where({
