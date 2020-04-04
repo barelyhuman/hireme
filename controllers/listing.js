@@ -28,7 +28,9 @@ controller.create = async (ctx) => {
 };
 
 controller.get = async (ctx) => {
-  const listings = await ctx.db('listings');
+  const listings = await ctx.db('listings').whereNot({
+    created_by: ctx.currentUser.id,
+  });
 
   const alreadyAppliedListings = (
     await ctx
