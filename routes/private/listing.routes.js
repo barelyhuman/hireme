@@ -4,5 +4,6 @@ module.exports = (app) => {
   app.post('/listings', ListingController.create);
   app.delete('/listings/:id', ListingController.delete);
   app.post('/listings/:id', ListingController.edit);
+  app.get('/listings/:id', ListingController.getById);
   app.get('/listings', ListingController.get);
 };

@@ -11,17 +11,11 @@ module.exports = async (ctx, next) => {
     }
 
     const decoded = await jwt.verify(token, Buffer.from(jwtSecret, 'base64'));
-    if (err) {
-      ctx.throw(500, `Internal Server Error`);
-      next(err);
-      return;
-    }
 
     ctx.currentUser = decoded;
 
     return next();
   } catch (err) {
-    console.error(err);
-    throw err;
+    ctx.throw(500, `Internal Server Error`);
   }
 };

@@ -27,7 +27,7 @@ controller.register = async (ctx) => {
     };
   } catch (err) {
     await trx.rollback();
-    return new Response(err);
+    throw err;
   }
 };
 
@@ -39,8 +39,6 @@ controller.login = async (ctx) => {
     }
 
     const userDetails = await ctx.db('users').where({ email: payload.email });
-
-    console.log({ userDetails });
 
     if (!userDetails || !userDetails.length) {
       return new Response(400, { error: `Invalid Email/Password` });

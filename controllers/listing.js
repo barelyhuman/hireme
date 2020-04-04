@@ -3,19 +3,15 @@ const controller = {
 };
 
 controller.create = async (ctx) => {
-  const trx = ctx.db.transaction();
+  const trx = await ctx.db.transaction();
   try {
     const payload = ctx.request.body;
 
-    if (
-      !payload.name ||
-      !payload.description ||
-      !payload.tags ||
-      !payload.location ||
-      !payload.created_by
-    ) {
+    if (!payload.name || !payload.description) {
       return new Response(400, `Missing fields`);
     }
+
+    payload.created_by = ctx.currentUser.id;
 
     await trx('listings').insert(payload);
     await trx.commit();
@@ -30,9 +26,16 @@ controller.create = async (ctx) => {
 };
 
 controller.get = async (ctx) => {
-  const { currentUser } = ctx;
+  const listings = await ctx.db('listings');
+
+  return {
+    data: listings,
+  };
+};
+
+controller.getByOwner = async (ctx) => {
   const listings = await ctx.db('listings').where({
-    created_by: currentUser.id,
+    created_by: ctx.currentUser.id,
   });
 
   return {
@@ -40,8 +43,26 @@ controller.get = async (ctx) => {
   };
 };
 
+controller.getById = async (ctx) => {
+  const listings = await ctx
+    .db('listings')
+    .leftJoin('applications', 'applications.listing_id', 'listings.id')
+    .where({
+      'listings.id': id,
+    });
+
+  const groupedByListingId = listings.reduce((acc, listing) => {
+    (acc[listing.id] || (acc[listing.id] = [])).push(listing);
+    return acc;
+  }, {});
+
+  return {
+    data: groupedByListingId,
+  };
+};
+
 controller.delete = async (ctx) => {
-  const trx = ctx.db.transaction();
+  const trx = await ctx.db.transaction();
   try {
     const { currentUser } = ctx;
     const payload = ctx.request.params;
