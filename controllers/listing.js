@@ -118,6 +118,66 @@ controller.delete = async (ctx) => {
   }
 };
 
+controller.getApplicants = async (ctx) => {
+  const applicants = await ctx
+    .db('listings')
+    .leftJoin('applications', 'applications.listing_id', 'listings.id')
+    .leftJoin('users', 'applications.applied_by', 'users.id')
+    .where({
+      'listings.id': ctx.request.params.id,
+    })
+    .select(
+      'applications.is_shortlisted as is_shortlisted',
+      'users.email as userEmail',
+      'users.id as userId',
+      'listings.id as listingId',
+      'listings.name as listingName'
+    );
+
+  const filtered = applicants.filter((item) => item.userEmail);
+
+  return {
+    data: filtered,
+  };
+};
+
+controller.toggleShortlist = async (ctx) => {
+  const trx = await ctx.db.transaction();
+  try {
+    const listingId = ctx.request.params.id;
+    const applicantId = ctx.request.params.applicantid;
+    const applicants = await trx('listings')
+      .leftJoin(
+        'applications as applicant',
+        'applicant.listing_id',
+        'listings.id'
+      )
+      .where({
+        'listings.id': listingId,
+        'applicant.applied_by': applicantId,
+      });
+
+    const toggleTo = !applicants[0].is_shortlisted;
+
+    await trx('applications')
+      .where({
+        listing_id: listingId,
+        applied_by: applicantId,
+      })
+      .update('is_shortlisted', toggleTo);
+
+    await trx.commit();
+
+    return {
+      message: 'Updated Shortlist Status',
+    };
+  } catch (err) {
+    await trx.rollback();
+    console.error(err);
+    throw err;
+  }
+};
+
 controller.edit = async (ctx) => {};
 
 module.exports = controller;
