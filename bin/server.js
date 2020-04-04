@@ -28,7 +28,10 @@ app.use(
   cors({
     origin: (ctx) => {
       const origin = ctx.headers.origin;
-      const validOrigins = ['http://localhost:8080', '*.barelyhuman.dev'];
+      const validOrigins = [
+        'http://localhost:8080',
+        'https://hireme.barelyhuman.dev/',
+      ];
       if (validOrigins.indexOf(origin) !== -1) {
         return origin;
       }
