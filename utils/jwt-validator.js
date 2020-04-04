@@ -20,7 +20,7 @@ module.exports = async (ctx, next) => {
       ctx.throw(401, `Unauthorized`);
     }
 
-    ctx.currentUser = currentUser;
+    ctx.currentUser = decoded;
 
     return next();
   } catch (err) {
