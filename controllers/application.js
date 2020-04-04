@@ -1,3 +1,4 @@
+const { Response } = require('cottage');
 const controller = {
   name: 'ApplicationController',
 };
@@ -10,6 +11,15 @@ controller.create = async (ctx) => {
 
     if (!payload.listing_id) {
       return ctx.throw(400, `No listing selected`);
+    }
+
+    const alreadyApplied = await trx('applications').where({
+      listing_id: payload.listing_id,
+      applied_by: currentUser.id,
+    });
+
+    if (alreadyApplied && alreadyApplied.length) {
+      return new Response(400, { error: `Already Applied` });
     }
 
     payload.applied_by = currentUser.id;

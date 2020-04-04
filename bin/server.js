@@ -50,6 +50,8 @@ app.use(async (ctx, next) => {
     console.error(err);
     if (typeof err.code == 'number') {
       ctx.throw(err.code, err.message);
+    } else if (err.statusCode) {
+      ctx.throw(err.statusCode, err.message);
     } else {
       ctx.throw(
         500,

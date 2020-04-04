@@ -15,6 +15,14 @@ controller.register = async (ctx) => {
     }
     const hashedPassword = await passwordHasher.hash(payload.password);
 
+    const existingUser = await trx('users').where({
+      email: payload.email,
+    });
+
+    if (existingUser && existingUser.length) {
+      return new Response(400, { error: `User with email already exists` });
+    }
+
     await trx('users').insert({
       email: payload.email,
       password: hashedPassword,

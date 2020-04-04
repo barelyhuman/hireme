@@ -17,7 +17,7 @@ module.exports = async (ctx, next) => {
     });
 
     if (!currentUser || !currentUser.length) {
-      ctx.throw(401, `Unauthorized`);
+      return ctx.throw(401, `Unauthorized`);
     }
 
     ctx.currentUser = decoded;
@@ -25,5 +25,6 @@ module.exports = async (ctx, next) => {
     return next();
   } catch (err) {
     ctx.throw(401, `Unauthorized`);
+    throw err;
   }
 };
