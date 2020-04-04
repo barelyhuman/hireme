@@ -12,7 +12,15 @@ module.exports = async (ctx, next) => {
 
     const decoded = await jwt.verify(token, Buffer.from(jwtSecret, 'base64'));
 
-    ctx.currentUser = decoded;
+    const currentUser = await ctx.db('users').where({
+      id: decoded.id,
+    });
+
+    if (!currentUser || !currentUser.length) {
+      ctx.throw(401, `Unauthorized`);
+    }
+
+    ctx.currentUser = currentUser;
 
     return next();
   } catch (err) {
