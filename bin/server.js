@@ -27,14 +27,12 @@ app.use(logger);
 app.use(
   cors({
     origin: (ctx) => {
-      console.log('origin');
       const origin = ctx.headers.origin;
       const validOrigins = [
         'http://localhost:8080',
         'https://hireme.barelyhuman.dev',
       ];
       if (validOrigins.indexOf(origin) > -1) {
-        console.log('valid origin');
         return origin;
       }
       return false;
