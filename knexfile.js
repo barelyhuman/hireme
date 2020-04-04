@@ -16,4 +16,7 @@ module.exports = {
       tableName: 'migrations',
     },
   },
+  staging: {
+    connection: process.env.DATABASE_URL,
+  },
 };
