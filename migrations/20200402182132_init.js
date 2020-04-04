@@ -2,21 +2,24 @@ exports.up = function (knex) {
   return knex.schema
 
     .createTable('users', function (table) {
-      table.uuid('id').unique().primary().notNullable();
+
+      table.increments('id').unique().primary().notNullable();
       table.string('email').unique().notNullable();
-      table.string('username').unique().notNullable();
       table.string('password').notNullable();
       table.timestamps(true, true);
     })
 
     .createTable('listings', function (table) {
       // Table Fields
-      table.uuid('id').unique().primary().notNullable();
+
+      table.increments('id').unique().primary().notNullable();
+
       table.string('name').notNullable();
       table.text('description').notNullable();
       table.string('tags').nullable();
       table.string('location').nullable();
-      table.uuid('created_by').notNullable();
+
+      table.integer('created_by').notNullable();
 
       // Foreign Keys
       table.foreign('created_by').references('users.id');
@@ -24,10 +27,10 @@ exports.up = function (knex) {
 
     .createTable('applications', function (table) {
       // Table Fields
-      table.uuid('id').unique().primary().notNullable();
-      table.uuid('applied_by').notNullable();
-      table.uuid('listing_id').notNullable();
+      table.increments('id').unique().primary().notNullable();
+      table.integer('applied_by').notNullable();
 
+      table.integer('listing_id').notNullable();
       // Foreign Keys
       table.foreign('applied_by').references('users.id');
       table.foreign('listing_id').references('listings.id');
