@@ -2,7 +2,9 @@ const jwtGenerator = require('../utils/token-generator');
 const passwordHasher = require('../utils/password-hash');
 const { Response } = require('cottage');
 const regexPatterns = require('../utils/regex');
-
+const emailService = require('../utils/email-service')();
+const randomToken = require('../utils/random-token');
+const originUrl = require('../configs/origin');
 const controller = {
   name: 'AuthController',
 };
@@ -81,6 +83,146 @@ controller.login = async (ctx) => {
   } catch (err) {
     console.error(err);
     return new Response(err.code, err.message);
+  }
+};
+
+controller.createMagicRequest = async (ctx) => {
+  const trx = await ctx.db.transaction();
+  try {
+    const payload = ctx.request.body;
+
+    if (!payload.tokenName || !payload.email) {
+      return new Response(400, { error: `Email and TokenName are required` });
+    }
+
+    const token = randomToken();
+    payload.token = token;
+
+    const savedToken = await trx('tokens').insert(payload, ['token', 'email']);
+
+    const verificationLink =
+      originUrl +
+      `/confirm?email=${savedToken.email}&token=${savedToken.token}`;
+
+    emailService.sendLoginVerification(savedToken.email, verificationLink);
+
+    return new Response(200, {
+      data: {
+        token: savedToken.token,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    return new Response(err.code, err.message);
+  }
+};
+
+controller.verifyMagicRequest = async (ctx) => {
+  let trx;
+  try {
+    const payload = ctx.request.body;
+
+    if (!payload.email || !payload.token) {
+      return new Response(400, { error: `Bad Request` });
+    }
+
+    const tokens = await ctx
+      .db('tokens')
+      .where({
+        email: payload.email,
+        token: payload.email,
+      })
+      .select('is_verified as isVerified');
+
+    const verified = tokens[0].isVerified || false;
+
+    const jwtTokenDetails = {};
+
+    if (verified) {
+      let userDetails = await ctx.db('users').where({
+        email: payload.email,
+      });
+
+      if (!userDetails.length) {
+        trx = await ctx.db.transaction();
+        userDetails = await trx('users').insert(
+          {
+            email: payload.email,
+          },
+          ['id']
+        );
+
+        jwtTokenDetails.id = userDetails[0];
+
+        await trx.commit();
+      } else {
+        jwtTokenDetails.id = userDetails[0].id;
+      }
+
+      const token = await jwtGenerator(jwtTokenDetails);
+      return new Response(200, {
+        data: {
+          verified: verified,
+          token: token,
+        },
+      });
+    }
+
+    return new Response(200, {
+      data: {
+        verified: verified,
+      },
+    });
+  } catch (err) {
+    if (trx) {
+      await trx.rollback();
+    }
+    console.error(err);
+    return new Response(err.code, err.message);
+  }
+};
+
+controller.acceptMagicRequest = async (ctx) => {
+  let trx;
+  try {
+    const payload = ctx.request.query;
+
+    if (!payload.email || !payload.token) {
+      return new Response(400, { error: `Bad Request` });
+    }
+
+    const tokens = await ctx
+      .db('tokens')
+      .where({
+        email: payload.email,
+        token: payload.token,
+      })
+      .select('is_verified as isVerified');
+
+    const verified = tokens[0].isVerified || false;
+
+    if (verified) {
+      return new Response(400, {
+        error: `The token is no more valid, Please request for a new one`,
+      });
+    }
+
+    trx = await ctx.db.transaction();
+
+    await trx('tokens').update('is_verified', true);
+
+    await trx.commit();
+
+    return new Response(200, {
+      data: {
+        verified: verified,
+      },
+    });
+  } catch (err) {
+    if (trx) {
+      await trx.rollback();
+    }
+    console.error(err);
   }
 };
 
