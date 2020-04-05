@@ -6,6 +6,7 @@ exports.up = function (knex) {
       table.text('token').unique().notNullable();
       table.boolean('is_verified').defaultTo('false').notNullable();
       table.string('email').notNullable();
+      table.timestamps(true, true);
     })
     .alterTable('users', function (table) {
       table.string('password').nullable().alter();

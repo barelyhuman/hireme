@@ -7,7 +7,7 @@ module.exports = (app) => {
 
   app.post('/register/magic', AuthController.createMagicRequest);
 
-  app.get('/verify/magic', AuthController.verifyMagicRequest);
+  app.post('/verify/magic', AuthController.verifyMagicRequest);
 
-  app.post('/confirm/magic', AuthController.acceptMagicRequest);
+  app.get('/confirm/magic', AuthController.acceptMagicRequest);
 };

@@ -1,5 +1,6 @@
 const sgMail = require('@sendgrid/mail');
-const { APIKEY, sender } = require('../configs/sendgrid');
+const { URL } = require('url');
+const { APIKEY, templates, sender } = require('../configs/sendgrid');
 
 module.exports = () => {
   sgMail.setApiKey(APIKEY);
@@ -7,13 +8,15 @@ module.exports = () => {
   const app = {};
 
   app.sendLoginVerification = (toEmail, verificationLink) => {
+    console.log(verificationLink);
     const msg = {
       to: toEmail,
       from: sender,
       subject: 'Login Verification',
+      templateId: templates.login,
       dynamic_template_data: {
-        subject: 'Login Verification',
-        verificationLink,
+        subject: 'Login Verification - HireMe',
+        verificationLink: verificationLink,
       },
     };
     sgMail.send(msg);

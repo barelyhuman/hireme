@@ -96,19 +96,29 @@ controller.createMagicRequest = async (ctx) => {
     }
 
     const token = randomToken();
-    payload.token = token;
 
-    const savedToken = await trx('tokens').insert(payload, ['token', 'email']);
+    const recordToInsert = {
+      token: token,
+      token_name: payload.tokenName,
+      email: payload.email,
+    };
+
+    const savedToken = await trx('tokens').insert(recordToInsert, [
+      'token',
+      'email',
+    ]);
 
     const verificationLink =
       originUrl +
-      `/confirm?email=${savedToken.email}&token=${savedToken.token}`;
+      `/confirm?email=${savedToken[0].email}&token=${savedToken[0].token}`;
 
-    emailService.sendLoginVerification(savedToken.email, verificationLink);
+    emailService.sendLoginVerification(savedToken[0].email, verificationLink);
+
+    await trx.commit();
 
     return new Response(200, {
       data: {
-        token: savedToken.token,
+        token: savedToken[0].token,
       },
     });
   } catch (err) {
@@ -130,9 +140,13 @@ controller.verifyMagicRequest = async (ctx) => {
       .db('tokens')
       .where({
         email: payload.email,
-        token: payload.email,
+        token: payload.token,
       })
       .select('is_verified as isVerified');
+
+    if (!tokens.length) {
+      return new Response(400, { error: `Invalid Token` });
+    }
 
     const verified = tokens[0].isVerified || false;
 
@@ -199,6 +213,10 @@ controller.acceptMagicRequest = async (ctx) => {
       })
       .select('is_verified as isVerified');
 
+    if (!tokens.length) {
+      return new Response(400, { error: `Invalid Token` });
+    }
+
     const verified = tokens[0].isVerified || false;
 
     if (verified) {
@@ -215,7 +233,7 @@ controller.acceptMagicRequest = async (ctx) => {
 
     return new Response(200, {
       data: {
-        verified: verified,
+        verified: true,
       },
     });
   } catch (err) {
