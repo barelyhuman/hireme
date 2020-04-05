@@ -3,4 +3,4 @@ const urls = {
   staging: 'http://hireme.barelyhuman.dev',
 };
 
-module.exports = url[process.env.NODE_ENV || 'development'];
+module.exports = urls[process.env.NODE_ENV || 'development'];
