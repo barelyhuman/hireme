@@ -19,6 +19,7 @@ exports.up = function (knex) {
       table.string('location').nullable();
 
       table.integer('created_by').notNullable();
+      table.timestamps(true, true);
 
       // Foreign Keys
       table.foreign('created_by').references('users.id');
@@ -28,7 +29,7 @@ exports.up = function (knex) {
       // Table Fields
       table.increments('id').unique().primary().notNullable();
       table.integer('applied_by').notNullable();
-
+      table.timestamps(true, true);
       table.integer('listing_id').notNullable();
       // Foreign Keys
       table.foreign('applied_by').references('users.id');

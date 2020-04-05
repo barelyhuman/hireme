@@ -133,8 +133,10 @@ controller.getApplicants = async (ctx) => {
       'users.email as userEmail',
       'users.id as userId',
       'listings.id as listingId',
-      'listings.name as listingName'
-    );
+      'listings.name as listingName',
+      'applications.id as applicationId'
+    )
+    .orderBy('applicationId', 'asc');
 
   const filtered = applicants.filter((item) => item.userEmail);
 
