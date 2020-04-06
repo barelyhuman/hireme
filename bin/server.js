@@ -23,6 +23,8 @@ const app = new Cottage();
 // Inject minimal logger
 app.use(logger);
 
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
 // Inject Cors
 app.use(
   cors({
