@@ -150,8 +150,6 @@ controller.verifyMagicRequest = async (ctx) => {
 
     const verified = tokens[0].isVerified || false;
 
-    const jwtTokenDetails = {};
-
     if (verified) {
       let userDetails = await ctx.db('users').where({
         email: payload.email,
@@ -166,14 +164,10 @@ controller.verifyMagicRequest = async (ctx) => {
           ['id']
         );
 
-        jwtTokenDetails.id = userDetails[0];
-
         await trx.commit();
-      } else {
-        jwtTokenDetails.id = userDetails[0].id;
       }
 
-      const token = await jwtGenerator(jwtTokenDetails);
+      const token = await jwtGenerator(userDetails[0]);
       return new Response(200, {
         data: {
           verified: verified,
