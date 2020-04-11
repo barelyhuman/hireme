@@ -88,7 +88,6 @@ This is just a gist of what's being used in this project
 - Code Formatter: [Prettier](https://github.com/prettier/prettier)
 - Git Hooks: [Husky](https://github.com/typicode/husky)
 - Authorization(Current): [JWT](https://www.npmjs.com/package/jsonwebtoken)
-- Authorization(Future Releases): [Magic.Link](https://magic.link/)
 - Crypto: [bcrypt](https://www.npmjs.com/package/bcrypt)
 
 ## Why no linters ?
